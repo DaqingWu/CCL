@@ -129,7 +129,7 @@ if __name__ == "__main__":
         for s in range(args.augs):
             loss_sup += torch.nn.functional.nll_loss(log_prob_list[s][idx_train], y[idx_train].cuda())
         loss_sup = loss_sup/args.augs
-        # print(loss_sup)
+
         ######################################## Center-Level Loss ########################################
         centers_list = []
         for s in range(args.augs):
@@ -144,10 +144,10 @@ if __name__ == "__main__":
         for c in range(args.num_class):
             loss_cen += torch.log(score_12[c][c] / (torch.sum(score_11[c])-score_11[c][c] + torch.sum(score_22[c])-score_22[c][c] + torch.sum(score_12[c])-score_12[c][c] + torch.sum(score_21[c])-score_21[c][c]))
         loss_cen = - loss_cen/args.num_class
-        # print(loss_cen)
+
         ######################################## Instance-Level Loss ########################################
         loss_ins = torch.mean(torch.sum(torch.pow(torch.exp(log_prob_list[0]) - torch.exp(log_prob_list[1]), 2), dim=1))
-        # print(loss_ins)
+
         loss = loss_sup + args.lambdas * loss_cen + args.mu * loss_ins
 
         optimizer.zero_grad()
